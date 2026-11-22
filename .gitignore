@@ -3,3 +3,9 @@
 
 # Ada Library Information
 *.ali
+
+# Dependencies
+node_modules
+
+# Hasil compile TypeScript
+dist
