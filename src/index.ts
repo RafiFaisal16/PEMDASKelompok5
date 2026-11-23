@@ -41,3 +41,4 @@ let uang: number = 0; // uang tunai yang dibayarkan
 let kembalian: number = 0; // uang kembalian
 let lunas: boolean = false; // status pembayaran (true = berhasil)
 let status: string = ""; // status transaksi (LUNAS / TIDAK LUNAS)
+console.log ("hello PEMDASKelompok 5");
