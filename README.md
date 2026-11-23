@@ -9,11 +9,15 @@ Tema: Sistem Kasir Kantin (pengembangan dari proyek UTS)
 
 ## Anggota dan Pembagian Tugas
 
+Progress 1 — Senin, 23 November 2026
+
 | Nama | NIM | GitHub | Bagian yang dikerjakan |
 | ---- | --- | ------ | ---------------------- |
-| Muhammad Rafi Faisal | 263140700111029 | @RafiFaisal16 | Membuat repository dan setting file project, README |
-| (Hafidz Muhammad Ilham ) | (263140700111006) | (@MORTEKS) | Laporan Bagian A (proposal dan analisis awal ) |
-| (Naila Putri Sahiro) | (263140700111049) | (@Nxthy707) | Penyusunan dan pemeriksaan format laporan |
+| Muhammad Rafi Faisal | 263140700111029 | @RafiFaisal16 | Membuat repository, setting file project, sistem dasar dari UTS, README, dan folder docs/ |
+| Hafidz Muhammad Ilham | 263140700111006 | @MORTEKS | Laporan Bagian A (proposal dan analisis awal): 1.1 Deskripsi Masalah, serta 1.2 Decomposition Menu Utama, Create, dan Read |
+| Naila Putri Sahiro | 263140700111049 | @Nxthy707 | Penyusunan dan pemeriksaan format laporan: Halaman Sampul, 1.1 Entitas Data dan Properti, 1.2 Decomposition Update, Delete, dan Search, serta 3.2 rencana pembagian tugas |
+
+Semua anggota membuat minimal 1 commit dengan akun GitHub masing-masing.
 
 ---
 
