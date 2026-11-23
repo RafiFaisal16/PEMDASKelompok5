@@ -13,7 +13,7 @@ Tema: Sistem Kasir Kantin (pengembangan dari proyek UTS)
 | ---- | --- | ------ | ---------------------- |
 | Muhammad Rafi Faisal | 263140700111029 | @RafiFaisal16 | Membuat repository dan setting file project, README |
 | (Hafidz Muhammad Ilham ) | (263140700111006) | (@MORTEKS) | Laporan Bagian A (proposal dan analisis awal ) |
-| (Naila Putri S) | (isi NIM) | (@Nxthy707) | Menyusul |
+| (Naila Putri Sahiro) | (263140700111049) | (@Nxthy707) | Penyusunan dan pemeriksaan format laporan |
 
 ---
 
