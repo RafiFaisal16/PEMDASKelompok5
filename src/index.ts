@@ -1,3 +1,6 @@
+console.log("hello console")
+console.log("Kelompok5")
+console.log("huhi")
 import * as readline from "readline";
 
 // Membuat objek rl: input dari keyboard (stdin), output ke terminal (stdout)
