@@ -61,11 +61,13 @@ Aplikasi ini adalah program kasir kantin berbasis terminal. Di UTS, program hany
 - Progress 7 (11 Des): finalisasi program, laporan, dan README. Belum
 
 Yang sudah selesai di Progress 1:
-- [x] Repository dibuat (Public)
-- [x] Pembagian tugas ditulis di README
-- [x] Proposal dan analisis awal
-- [ ] Draft laporan di folder `docs/`
-- [ ] Semua anggota sudah punya minimal 1 commit
+- Repository dibuat (Public)
+- Pembagian tugas ditulis di README
+- Proposal dan analisis awal
+- Draft laporan di folder `docs/`
+- Semua anggota sudah punya minimal 1 commit
+
+Link DOCS Laporan Bagian A: https://docs.google.com/document/d/1WYCie03mGy7b_w3w_ZReOX-VwWsQMANI9QzZLjE09eo/edit?usp=sharing
 
 ---
 
