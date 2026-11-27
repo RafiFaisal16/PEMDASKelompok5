@@ -1,67 +1,62 @@
 import * as readline from "readline";
+//digunakan untuk mengimpor module readline dari node.js, yang memungkinkan program membaca input dari pengguna
 
-// ============================================================================
-// BAGIAN A: PENGATURAN INPUT TERMINAL
-// ============================================================================
-
-// Membuat objek rl: input dari keyboard (stdin), output ke terminal (stdout)
+// Bikin "rl" buat baca ketikan (input) dan nampilin tulisan (output) di terminal
 const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
+  input: process.stdin, // input datang dari keyboard
+  output: process.stdout, // output keluar ke layar terminal
 });
 
-// ============================================================================
-// BAGIAN B: STRUKTUR DATA (ENTITAS) DAN DATA AWAL
-// ============================================================================
-
-// Entitas Menu: satu objek mewakili satu menu yang dijual di kantin
+// Menu: bentuk data untuk 1 menu di kantin, bisa makanan atau minuman.
+// Jadi tiap menu pasti punya id, nama, kategori, harga, stok, dan status tersedia.
 interface Menu {
-  id: string; // kode unik menu, contoh "M001"
-  nama: string; // nama menu
-  kategori: string; // kategori menu: "Makanan" atau "Minuman"
-  harga: number; // harga per porsi (rupiah)
-  stok: number; // jumlah stok yang tersedia
-  tersedia: boolean; // status ketersediaan (true = dijual)
+  id: string; // kode menu biar tidak ketuker, contoh "M001"
+  nama: string; // nama menunya, contoh "Nasi Goreng"
+  kategori: string; // jenis menunya: "Makanan" atau "Minuman"
+  harga: number; // harga 1 porsi (rupiah)
+  stok: number; // sisa stok yang masih ada
+  tersedia: boolean; // true kalau menu masih dijual, false kalau tidak dijual
 }
 
-// Entitas ItemKeranjang: satu baris pesanan di dalam keranjang belanja
+// ItemKeranjang: 1 baris isi keranjang, misalnya "Es Teh 2 gelas".
+// Isinya menu yang dipilih, berapa banyak, dan harganya (subtotal).
 interface ItemKeranjang {
-  menu: Menu; // menu yang dipesan (merujuk ke objek di daftarMenu)
-  jumlah: number; // jumlah porsi yang dipesan
-  subtotal: number; // harga x jumlah untuk baris ini
+  menu: Menu; // menu yang dipesan (ambil dari daftarMenu)
+  jumlah: number; // berapa porsi yang dipesan
+  subtotal: number; // harga menu dikali jumlah
 }
 
-// Entitas Transaksi: menyimpan hasil satu kali transaksi untuk dicetak di struk
+// Transaksi: catatan 1 kali belanja, nanti dipakai buat nulis struk
 interface Transaksi {
   nomor: number; // nomor urut transaksi
-  keranjang: ItemKeranjang[]; // seluruh menu yang dibeli pada transaksi ini
+  keranjang: ItemKeranjang[]; // semua menu yang dibeli di transaksi ini
   total: number; // total belanja sebelum diskon
-  diskon: number; // diskon dalam bentuk desimal (0.15 = 15%)
+  diskon: number; // diskon dalam bentuk desimal (0.15 artinya 15%)
   totalBayar: number; // total yang harus dibayar setelah diskon
-  metodeBayar: string; // nama metode pembayaran
+  metodeBayar: string; // dibayar pakai apa (Tunai, QRIS, atau Debit)
   kembalian: number; // uang kembalian
-  poin: number; // poin member yang didapat
-  status: string; // status transaksi (selalu LUNAS karena struk hanya dicetak setelah bayar berhasil)
+  poin: number; // poin yang didapat kalau pembeli member
+  status: string; // status transaksi, selalu LUNAS karena struk baru dicetak kalau sudah bayar
 }
 
-// Data awal (seed) menu: array of object, disimpan di memori
-// (const karena variabel array tidak diganti, isinya boleh bertambah/berubah)
+// Data awal menu. Ini array yang isinya banyak objek menu (makanan dan minuman).
+// Pakai const karena arraynya tidak diganti, tapi isinya tetap boleh ditambah atau diubah.
 const daftarMenu: Menu[] = [
-  { id: "M001", nama: "Nasi Goreng", kategori: "Makanan", harga: 15000, stok: 20, tersedia: true },
-  { id: "M002", nama: "Mie Ayam", kategori: "Makanan", harga: 12000, stok: 20, tersedia: true },
-  { id: "M003", nama: "Es Teh", kategori: "Minuman", harga: 5000, stok: 20, tersedia: true },
-  { id: "M004", nama: "Air Mineral", kategori: "Minuman", harga: 3000, stok: 20, tersedia: true },
-  { id: "M005", nama: "Ayam Geprek", kategori: "Makanan", harga: 18000, stok: 15, tersedia: true },
-  { id: "M006", nama: "Soto Ayam", kategori: "Makanan", harga: 14000, stok: 0, tersedia: false },
+  { id: "M001", nama: "Nasi Goreng", kategori: "Makanan", harga: 15000, stok: 20, tersedia: true }, // makanan pertama
+  { id: "M002", nama: "Mie Ayam", kategori: "Makanan", harga: 12000, stok: 20, tersedia: true }, // makanan kedua
+  { id: "M003", nama: "Es Teh", kategori: "Minuman", harga: 5000, stok: 20, tersedia: true }, // minuman pertama
+  { id: "M004", nama: "Air Mineral", kategori: "Minuman", harga: 3000, stok: 20, tersedia: true }, // minuman kedua
+  { id: "M005", nama: "Ayam Geprek", kategori: "Makanan", harga: 18000, stok: 15, tersedia: true }, // makanan ketiga
+  { id: "M006", nama: "Soto Ayam", kategori: "Makanan", harga: 14000, stok: 0, tersedia: false }, // stok kosong, buat ngetes menu tidak tersedia
 ];
 
-// ATURAN TETAP (const karena nilainya tidak berubah)
-const maksJumlah: number = 20; // batas maksimal jumlah pesanan
-const batasDiskon: number = 50000; // total minimal untuk mendapat diskon
-const poinTambahan: number = 10; // poin yang didapat member
-const daftarPecahan: number[] = [100000, 50000, 20000, 10000, 5000, 2000, 1000, 500, 200, 100, 50]; // pecahan uang untuk rincian kembalian
+// ATURAN TOKO (pakai const karena nilainya tetap, tidak berubah-ubah)
+const maksJumlah: number = 20; // paling banyak beli 20 porsi per menu
+const batasDiskon: number = 50000; // belanja minimal 50rb baru dapat diskon
+const poinTambahan: number = 10; // poin yang didapat member tiap transaksi
+const daftarPecahan: number[] = [100000, 50000, 20000, 10000, 5000, 2000, 1000, 500, 200, 100, 50]; // pecahan uang buat nampilin rincian kembalian
 
-// VARIABEL SESI (let karena nilainya berubah selama program berjalan)
-let jumlahTransaksi: number = 0; // jumlah transaksi yang sudah dibuat
-let totalPendapatan: number = 0; // total uang yang diterima dari transaksi LUNAS
-let totalPoin: number = 0; // total poin member yang terkumpul pada sesi ini
+// DATA SELAMA PROGRAM JALAN (pakai let karena nilainya terus berubah)
+let jumlahTransaksi: number = 0; // sudah berapa transaksi yang selesai
+let totalPendapatan: number = 0; // total uang yang masuk dari transaksi yang lunas
+let totalPoin: number = 0; // total poin member yang terkumpul
