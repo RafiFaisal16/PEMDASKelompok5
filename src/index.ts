@@ -1,7 +1,7 @@
 // BAGIAN C: FUNGSI BANTU (INPUT, TAMPILAN, PENCARIAN)
 
 // Fungsi buat nanya sesuatu ke pengguna lalu mengembalikan jawabannya (berupa string).
-// Spasi di depan dan belakang jawaban dibuang biar rapi.
+// Spasi di depan dan belakang jawaban dibuang biar rapi
 function tanya(pertanyaan: string): Promise<string> {
   return new Promise<string>((selesai) => {
     // Tampilkan pertanyaan, lalu tunggu pengguna ngetik dan tekan Enter
