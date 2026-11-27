@@ -19,7 +19,7 @@ function buatGaris(panjang: number, simbol: string): string {
   for (let i = 0; i < panjang; i++) {
     garis += simbol; // tambah simbol ke belakang garis (operator +=)
   }
-  return garis; // kasih balik garis yang sudah jadi
+  return garis; // kasih balik garis yang sudah jadi.
 }
 
 // Fungsi buat ngubah angka jadi tulisan rupiah, contoh 15000 jadi "Rp15.000"
