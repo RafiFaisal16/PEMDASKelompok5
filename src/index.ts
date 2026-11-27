@@ -1,6 +1,4 @@
-// ============================================================================
 // BAGIAN C: FUNGSI BANTU (INPUT, TAMPILAN, PENCARIAN)
-// ============================================================================
 
 // Fungsi buat nanya sesuatu ke pengguna lalu mengembalikan jawabannya (berupa string).
 // Spasi di depan dan belakang jawaban dibuang biar rapi.
