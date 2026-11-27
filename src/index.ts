@@ -1,7 +1,6 @@
 // BAGIAN F: PROSES TRANSAKSI (DARI UTS, SEKARANG ADA KERANJANG)
 
 
-
 // Fungsi buat nyetak struk dari data transaksi (void)
 function cetakStruk(t: Transaksi): void {
   // Ngitung hemat per porsi: total potongan dibagi jumlah semua porsi
