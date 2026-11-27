@@ -1,6 +1,5 @@
-// ============================================================================
 // BAGIAN F: PROSES TRANSAKSI (DARI UTS, SEKARANG ADA KERANJANG)
-// ============================================================================
+
 
 // Fungsi buat nyetak struk dari data transaksi (void)
 function cetakStruk(t: Transaksi): void {
@@ -227,11 +226,3 @@ async function prosesTransaksi(): Promise<void> {
   };
   cetakStruk(transaksi); // cetak struknya
 }
-
-// ============================================================================
-// SEMENTARA (langkah 3): kode percobaan biar bagian ini bisa dijalankan sendiri.
-// Bagian ini DIHAPUS di langkah berikutnya.
-// ============================================================================
-prosesTransaksi().then(() => { // coba jalankan 1 transaksi saja
-  rl.close(); // tutup input setelah transaksi selesai
-});
