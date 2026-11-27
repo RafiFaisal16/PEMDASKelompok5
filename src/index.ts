@@ -7,60 +7,6 @@ const rl = readline.createInterface({
   output: process.stdout, // output keluar ke layar terminal
 });
 
-// Menu: bentuk data untuk 1 menu di kantin, bisa makanan atau minuman
-// Jadi tiap menu pasti punya id, nama, kategori, harga, stok, dan status tersedia
-interface Menu {
-  id: string; // kode menu biar tidak ketuker, contoh "M001"
-  nama: string; // nama menunya, contoh "Nasi Goreng"
-  kategori: string; // jenis menunya: "Makanan" atau "Minuman"
-  harga: number; // harga 1 porsi (rupiah)
-  stok: number; // sisa stok yang masih ada
-  tersedia: boolean; // true kalau menu masih dijual, false kalau tidak dijual
-}
-
-// ItemKeranjang: 1 baris isi keranjang, misalnya "Es Teh 2 gelas".
-// Isinya menu yang dipilih, berapa banyak, dan harganya (subtotal).
-interface ItemKeranjang {
-  menu: Menu; // menu yang dipesan (ambil dari daftarMenu)
-  jumlah: number; // berapa porsi yang dipesan
-  subtotal: number; // harga menu dikali jumlah
-}
-
-// Transaksi: catatan 1 kali belanja, nanti dipakai buat nulis struk
-interface Transaksi {
-  nomor: number; // nomor urut transaksi
-  keranjang: ItemKeranjang[]; // semua menu yang dibeli di transaksi ini
-  total: number; // total belanja sebelum diskon
-  diskon: number; // diskon dalam bentuk desimal (0.15 artinya 15%)
-  totalBayar: number; // total yang harus dibayar setelah diskon
-  metodeBayar: string; // dibayar pakai apa (Tunai, QRIS, atau Debit)
-  kembalian: number; // uang kembalian
-  poin: number; // poin yang didapat kalau pembeli member
-  status: string; // status transaksi, selalu LUNAS karena struk baru dicetak kalau sudah bayar
-}
-
-// Data awal menu. Ini array yang isinya banyak objek menu (makanan dan minuman).
-// Pakai const karena arraynya tidak diganti, tapi isinya tetap boleh ditambah atau diubah.
-const daftarMenu: Menu[] = [
-  { id: "M001", nama: "Nasi Goreng", kategori: "Makanan", harga: 15000, stok: 20, tersedia: true }, // makanan pertama
-  { id: "M002", nama: "Mie Ayam", kategori: "Makanan", harga: 12000, stok: 20, tersedia: true }, // makanan kedua
-  { id: "M003", nama: "Es Teh", kategori: "Minuman", harga: 5000, stok: 20, tersedia: true }, // minuman pertama
-  { id: "M004", nama: "Air Mineral", kategori: "Minuman", harga: 3000, stok: 20, tersedia: true }, // minuman kedua
-  { id: "M005", nama: "Ayam Geprek", kategori: "Makanan", harga: 18000, stok: 15, tersedia: true }, // makanan ketiga
-  { id: "M006", nama: "Soto Ayam", kategori: "Makanan", harga: 14000, stok: 0, tersedia: false }, // stok kosong, buat ngetes menu tidak tersedia
-];
-
-// ATURAN TOKO (pakai const karena nilainya tetap, tidak berubah-ubah)
-const maksJumlah: number = 20; // paling banyak beli 20 porsi per menu
-const batasDiskon: number = 50000; // belanja minimal 50rb baru dapat diskon
-const poinTambahan: number = 10; // poin yang didapat member tiap transaksi
-const daftarPecahan: number[] = [100000, 50000, 20000, 10000, 5000, 2000, 1000, 500, 200, 100, 50]; // pecahan uang buat nampilin rincian kembalian
-
-// DATA SELAMA PROGRAM JALAN (pakai let karena nilainya terus berubah)
-let jumlahTransaksi: number = 0; // sudah berapa transaksi yang selesai
-let totalPendapatan: number = 0; // total uang yang masuk dari transaksi yang lunas
-let totalPoin: number = 0; // total poin member yang terkumpul.
-
 // ============================================================================
 // BAGIAN B: STRUKTUR DATA (BENTUK DATA) DAN DATA AWAL
 // ============================================================================
@@ -210,6 +156,20 @@ function tampilKeranjang(keranjang: ItemKeranjang[]): void {
   // Tampilkan total sementara dari semua isi keranjang
   console.log("Total sementara: " + formatRupiah(hitungTotalKeranjang(keranjang)));
 }
+
+// ============================================================================
+// BAGIAN E: KERANGKA FITUR CRUD DAN SEARCH (NANTI DIISI DI PROGRESS BERIKUTNYA)
+// ============================================================================
+
+// Fungsi buat pesan sementara untuk fitur yang belum dikerjakan (void)
+function fiturBelumTersedia(namaFitur: string, progress: number): void {
+  console.log("Fitur " + namaFitur + " belum tersedia, akan dikerjakan pada Progress " + progress + ".");
+}
+
+// [PROGRESS 3] fungsi tambahMenu() untuk fitur Create ditambahkan di sini
+// [PROGRESS 4] fungsi tampilSemuaMenu() dan tampilDetailMenu() untuk fitur Read ditambahkan di sini
+// [PROGRESS 5] fungsi ubahMenu() dan hapusMenu() untuk fitur Update dan Delete ditambahkan di sini
+// [PROGRESS 6] fungsi cariMenu() untuk fitur Search ditambahkan di sini
 
 // ============================================================================
 // BAGIAN D: FUNGSI PERHITUNGAN TRANSAKSI (DARI UTS)
@@ -486,3 +446,95 @@ async function prosesTransaksi(): Promise<void> {
   };
   cetakStruk(transaksi); // cetak struknya
 }
+
+// ============================================================================
+// BAGIAN G: MENU UTAMA (MUTER TERUS SAMPAI PENGGUNA PILIH KELUAR)
+// ============================================================================
+
+// Fungsi buat nampilin pilihan menu utama (void)
+function tampilMenuUtama(): void {
+  console.log("");
+  console.log(buatGaris(32, "=")); // garis atas
+  console.log("        KASIR KANTIN"); // judul program
+  console.log(buatGaris(32, "=")); // garis bawah judul
+  console.log("1. Tambah menu (Create)");
+  console.log("2. Lihat menu (Read)");
+  console.log("3. Ubah menu (Update)");
+  console.log("4. Hapus menu (Delete)");
+  console.log("5. Cari menu (Search)");
+  console.log("6. Transaksi pembelian");
+  console.log("0. Keluar");
+  console.log(buatGaris(32, "-")); // garis penutup
+}
+
+// Fungsi buat nampilin ringkasan saat pengguna keluar dari program (void)
+function tampilRingkasanAkhir(): void {
+  console.log("");
+  console.log("Jumlah transaksi : " + jumlahTransaksi); // berapa transaksi yang selesai
+  console.log("Total pendapatan : " + formatRupiah(totalPendapatan)); // total uang masuk
+  console.log("Total poin member: " + totalPoin); // total poin member
+  console.log("Sisa stok akhir  :");
+  // Tampilkan sisa stok tiap menu pakai forEach
+  daftarMenu.forEach((menu: Menu) => {
+    console.log("  " + menu.id + " " + menu.nama + ": " + menu.stok);
+  });
+  console.log("Terima kasih, program selesai.");
+}
+
+// Fungsi utama: nampilin menu utama terus-terusan sampai pengguna pilih 0 (keluar)
+async function jalankanAplikasi(): Promise<void> {
+  let berjalan: boolean = true; // true = program masih jalan, false = mau keluar
+
+  // Ulangi menu selama berjalan masih true
+  while (berjalan) {
+    tampilMenuUtama(); // tampilkan pilihan menu
+    const jawab: string = await tanya("Pilih menu (0-6) : "); // pengguna ngetik pilihan
+
+    // IF 8: pilihan kosong ditolak, soalnya Number("") hasilnya 0 dan bisa dikira pilih keluar
+    if (jawab === "") {
+      console.log("Pesan error: pilihan tidak boleh kosong.");
+      continue; // ulang dari awal, tampilkan menu lagi
+    }
+
+    // Ubah jawaban (tulisan) jadi angka. Kalau yang diketik huruf hasilnya NaN dan masuk default
+    const pilihan: number = Number(jawab);
+
+    // SWITCH 2: pilih menu utama (6 case + 1 keluar + default)
+    switch (pilihan) {
+      case 1: // Create (tambah menu)
+        fiturBelumTersedia("Tambah Menu (Create)", 3);
+        break;
+      case 2: // Read (lihat menu)
+        fiturBelumTersedia("Lihat Menu (Read)", 4);
+        break;
+      case 3: // Update (ubah menu)
+        fiturBelumTersedia("Ubah Menu (Update)", 5);
+        break;
+      case 4: // Delete (hapus menu)
+        fiturBelumTersedia("Hapus Menu (Delete)", 5);
+        break;
+      case 5: // Search (cari menu)
+        fiturBelumTersedia("Cari Menu (Search)", 6);
+        break;
+      case 6: // transaksi pembelian (kode dari UTS)
+        await prosesTransaksi();
+        break;
+      case 0: // keluar dari program
+        berjalan = false; // bikin perulangan while berhenti
+        break;
+      default: // angka di luar 0 sampai 6, atau bukan angka
+        console.log("Pesan error: pilihan menu tidak valid, masukkan angka 0 sampai 6.");
+        break;
+    }
+  }
+
+  // Perulangan sudah berhenti: tampilkan ringkasan lalu tutup readline
+  tampilRingkasanAkhir();
+  rl.close();
+}
+
+// Jalankan programnya. Kalau ada error yang tidak terduga, tampilkan pesannya lalu tutup readline
+jalankanAplikasi().catch((kesalahan: unknown) => {
+  console.log("Terjadi kesalahan: " + String(kesalahan));
+  rl.close();
+});
