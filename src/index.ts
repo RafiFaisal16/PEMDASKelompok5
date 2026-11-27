@@ -131,11 +131,3 @@ function tampilRincianKembalian(kembalian: number): void {
     }
   }
 }
-
-// ============================================================================
-// SEMENTARA (langkah 2): kode percobaan biar bagian ini bisa dijalankan sendiri.
-// Bagian ini DIHAPUS di langkah berikutnya.
-// ============================================================================
-tampilPilihanMenu(); // coba tampilkan daftar menu
-console.log("Uji diskon member, total 60000: " + Math.round(tentukanDiskon(true, 60000) * 100) + "%"); // coba hitung diskon
-rl.close(); // tutup input karena cuma percobaan
