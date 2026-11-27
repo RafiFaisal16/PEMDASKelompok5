@@ -1,4 +1,4 @@
-// BAGIAN F: PROSES TRANSAKSI (DARI UTS, SEKARANG ADA KERANJANG)
+// BAGIAN F: PROSES TRANSAKSI
 
 // Fungsi buat nyetak struk dari data transaksi (void)
 function cetakStruk(t: Transaksi): void {
