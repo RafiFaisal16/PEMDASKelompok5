@@ -221,7 +221,7 @@ async function prosesTransaksi(): Promise<void> {
     metodeBayar: metodeBayar, // cara bayar
     kembalian: kembalian, // uang kembalian
     poin: poin, // poin yang didapat
-    status: "LUNAS", // struk cuma dicetak kalau sudah bayar, jadi pasti LUNAS
+    status: "LUNAS", // struk cuma dicetak kalau sudah bayar/lunas, jadi pasti LUNAS
   };
   cetakStruk(transaksi); // cetak struknya.
 }
