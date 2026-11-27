@@ -77,7 +77,7 @@ async function jalankanAplikasi(): Promise<void> {
     }
   }
 
-  // TAHAP 2: hitung total, diskon, dan poin
+  // TAHAP 2: hitung total, diskon, dan poin.
   const jawabMember: string = await tanya("Member (y/n)         : "); // tanya pembeli member atau bukan
   // Dianggap member kalau jawabnya y atau Y
   const isMember: boolean = jawabMember === "y" || jawabMember === "Y";
