@@ -1,4 +1,15 @@
-// BAGIAN G: MENU UTAMA (MUTER TERUS SAMPAI PENGGUNA PILIH KELUAR)
+// BAGIAN C: FUNGSI BANTU (INPUT, TAMPILAN, PENCARIAN)
+
+// Fungsi buat nanya sesuatu ke pengguna lalu mengembalikan jawabannya (berupa string).
+// Spasi di depan dan belakang jawaban dibuang biar rapi
+function tanya(pertanyaan: string): Promise<string> {
+  return new Promise<string>((selesai) => {
+    // Tampilkan pertanyaan, lalu tunggu pengguna ngetik dan tekan Enter
+    rl.question(pertanyaan, (jawaban: string) => {
+      selesai(jawaban.trim()); // kirim balik jawaban yang sudah dirapikan
+    });
+  });
+}
 
 // Fungsi buat nampilin pilihan menu utama (void)
 function tampilMenuUtama(): void {
