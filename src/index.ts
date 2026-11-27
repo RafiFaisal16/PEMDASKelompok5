@@ -3,9 +3,9 @@
 // Fungsi buat nampilin pilihan menu utama (void)
 function tampilMenuUtama(): void {
   console.log("");
-  console.log(buatGaris(32, "=")); // garis atas
-  console.log("        KASIR KANTIN"); // judul program
-  console.log(buatGaris(32, "=")); // garis bawah judul
+  console.log(buatGaris(32, "=")); // garis atas.
+  console.log("        KASIR KANTIN"); // judul program.
+  console.log(buatGaris(32, "=")); // garis bawah judul.
   console.log("1. Tambah menu (Create)");
   console.log("2. Lihat menu (Read)");
   console.log("3. Ubah menu (Update)");
@@ -13,7 +13,7 @@ function tampilMenuUtama(): void {
   console.log("5. Cari menu (Search)");
   console.log("6. Transaksi pembelian");
   console.log("0. Keluar");
-  console.log(buatGaris(32, "-")); // garis penutup
+  console.log(buatGaris(32, "-")); // garis penutup.
 }
 
 // Fungsi buat nampilin ringkasan saat pengguna keluar dari program (void)
