@@ -1,269 +1,237 @@
-import * as readline from "readline";
+// ============================================================================
+// BAGIAN F: PROSES TRANSAKSI (DARI UTS, SEKARANG ADA KERANJANG)
+// ============================================================================
 
-// Membuat objek rl: input dari keyboard (stdin), output ke terminal (stdout)
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
-
-// DATA MENU (const karena nilainya tetap)
-const namaMenu1: string = "Nasi Goreng"; // nama menu nomor 1
-const hargaMenu1: number = 15000; // harga menu nomor 1
-const namaMenu2: string = "Mie Ayam"; // nama menu nomor 2
-const hargaMenu2: number = 12000; // harga menu nomor 2
-const namaMenu3: string = "Es Teh"; // nama menu nomor 3
-const hargaMenu3: number = 5000; // harga menu nomor 3
-const namaMenu4: string = "Air Mineral"; // nama menu nomor 4
-const hargaMenu4: number = 3000; // harga menu nomor 4
-
-// ATURAN TETAP (const)
-const maksJumlah: number = 20; // batas maksimal jumlah pesanan
-const batasDiskon: number = 50000; // total minimal untuk mendapat diskon
-const poinTambahan: number = 10; // poin yang didapat member
-
-// STOK MENU (let karena nilainya berubah)
-let stokMenu1: number = 20; // stok Nasi Goreng
-let stokMenu2: number = 20; // stok Mie Ayam
-let stokMenu3: number = 20; // stok Es Teh
-let stokMenu4: number = 20; // stok Air Mineral
-
-// VARIABEL TRANSAKSI (let karena nilainya berubah)
-let namaDipilih: string = ""; // nama menu yang dipilih pembeli
-let hargaDipilih: number = 0; // harga menu yang dipilih pembeli
-let jumlah: number = 0; // jumlah pesanan
-let isMember: boolean = false; // status member (true = member)
-let total: number = 0; // total belanja sebelum diskon
-let diskon: number = 0; // besar diskon dalam bentuk desimal (0.15 = 15%)
-let totalBayar: number = 0; // total yang harus dibayar setelah diskon
-let poin: number = 0; // poin yang didapat
-let metodeBayar: string = ""; // nama metode pembayaran
-let uang: number = 0; // uang tunai yang dibayarkan
-let kembalian: number = 0; // uang kembalian
-let lunas: boolean = false; // status pembayaran (true = berhasil)
-let status: string = ""; // status transaksi (LUNAS / TIDAK LUNAS)
-
-// TAHAP 1: Tampilkan menu dan input pesanan
-
-function mulai(): void {
-  // Menampilkan judul dan daftar menu beserta harga dan stok
-  console.log("=== KASIR KANTIN ===");
-  console.log("1. " + namaMenu1 + " - Rp" + hargaMenu1 + " (stok " + stokMenu1 + ")");
-  console.log("2. " + namaMenu2 + " - Rp" + hargaMenu2 + " (stok " + stokMenu2 + ")");
-  console.log("3. " + namaMenu3 + " - Rp" + hargaMenu3 + " (stok " + stokMenu3 + ")");
-  console.log("4. " + namaMenu4 + " - Rp" + hargaMenu4 + " (stok " + stokMenu4 + ")");
-
-  // Meminta input pilihan menu dari kasir
-  rl.question("Pilih menu (1-4)  : ", (jawabMenu: string) => {
-    // Mengubah jawaban menu (string) menjadi angka
-    const pilihanMenu: number = Number(jawabMenu);
-
-    // Meminta input jumlah pesanan
-    rl.question("Jumlah pesanan    : ", (jawabJumlah: string) => {
-      // Mengubah jawaban jumlah (string) menjadi angka
-      jumlah = Number(jawabJumlah);
-
-      // Meminta input status member
-      rl.question("Member (y/n)      : ", (jawabMember: string) => {
-        // Pembeli dianggap member jika menjawab y atau Y
-        isMember = jawabMember === "y" || jawabMember === "Y";
-
-        // Semua input selesai, lanjut memproses pesanan
-        prosesPesanan(pilihanMenu);
-      });
-    });
-  });
+// Fungsi buat nyetak struk dari data transaksi (void)
+function cetakStruk(t: Transaksi): void {
+  // Ngitung hemat per porsi: total potongan dibagi jumlah semua porsi
+  let hematPerPorsi: number = t.total - t.totalBayar; // total potongan dulu
+  hematPerPorsi /= hitungTotalPorsi(t.keranjang); // lalu dibagi jumlah porsi (operator /=)
+  console.log(""); // baris kosong
+  console.log("========== STRUK #" + t.nomor + " =========="); // judul struk
+  // Tulis isi keranjang satu per satu: nama, jumlah, harga satuan, subtotal
+  for (const item of t.keranjang) {
+    console.log(item.menu.nama + " x" + item.jumlah + " @" + formatRupiah(item.menu.harga) + " = " + formatRupiah(item.subtotal));
+  }
+  console.log(buatGaris(31, "-")); // garis pemisah isi pesanan dan rincian biaya
+  console.log("Total        : " + formatRupiah(t.total)); // total sebelum diskon
+  console.log("Diskon       : " + Math.round(t.diskon * 100) + "%"); // diskon dalam persen
+  console.log("Hemat/porsi  : " + formatRupiah(Math.round(hematPerPorsi))); // hemat tiap porsi
+  console.log("Total bayar  : " + formatRupiah(t.totalBayar)); // yang harus dibayar
+  console.log("Metode bayar : " + t.metodeBayar); // dibayar pakai apa
+  console.log("Kembalian    : " + formatRupiah(t.kembalian)); // uang kembalian
+  console.log("Poin         : " + t.poin); // poin yang didapat
+  console.log("Status       : " + t.status); // status transaksi
+  console.log("==============================="); // garis penutup struk
 }
 
-// TAHAP 2: Validasi, cek stok, diskon, total bayar, dan poin
-function prosesPesanan(pilihanMenu: number): void {
-  // IF 1: validasi jumlah (flowchart: Jumlah valid)
-  // Jumlah tidak valid jika di luar 1 sampai 20 (memakai operator logika && dan !)
-  if (!(jumlah >= 1 && jumlah <= maksJumlah)) {
-    // Menampilkan pesan error lalu program selesai
-    console.log("Pesan error: jumlah harus 1 sampai " + maksJumlah + ".");
-    rl.close(); // menutup readline
-    return; // keluar dari fungsi (program selesai)
+// Fungsi buat bayar pakai Debit. PIN diketik pelanggan sendiri di mesin EDC,
+// jadi program ini tidak tahu PIN-nya. Kasir cuma ngisi hasilnya: PIN benar atau salah.
+// Hasilnya true kalau PIN benar, false kalau pelanggan memilih ganti metode bayar.
+async function cekPinDebit(): Promise<boolean> {
+  // Ulangi terus sampai PIN benar atau pelanggan memilih ganti metode
+  while (true) {
+    console.log("Pelanggan memasukkan PIN di mesin EDC.");
+    const jawab: string = await tanya("PIN benar menurut mesin EDC (y/n) : ");
+    // IF: PIN dianggap benar kalau kasir jawab y atau Y
+    if (jawab === "y" || jawab === "Y") {
+      return true; // PIN benar, bayar Debit berhasil
+    }
+    console.log("Pesan error: PIN salah.");
+    const pilih: string = await tanya("1. Coba lagi  2. Ganti metode bayar : ");
+    // IF: kalau pilih 2 berarti balik ke pilihan metode bayar
+    if (pilih === "2") {
+      return false; // bayar Debit tidak jadi
+    }
+  }
+}
+
+// Fungsi buat 1 kali transaksi dari awal sampai struk: isi keranjang, hitung total, bayar, cetak struk
+async function prosesTransaksi(): Promise<void> {
+  // TAHAP 1: tampilkan menu, pilih menu dan jumlah, masukkan ke keranjang
+  const keranjang: ItemKeranjang[] = []; // keranjang kosong buat transaksi ini
+  let lanjutPesan: boolean = true; // true berarti masih mau nambah pesanan
+
+  // Ulangi terus selama pembeli masih mau nambah pesanan
+  while (lanjutPesan) {
+    tampilPilihanMenu(); // tampilkan daftar makanan dan minuman
+    const idPilih: string = await tanya("ID menu (0 = batal)  : "); // pembeli ngetik id menu
+
+    // IF 2: kalau ngetik 0 berarti transaksi dibatalkan (belum ada stok yang berubah)
+    if (idPilih === "0") {
+      console.log("Transaksi dibatalkan.");
+      return; // keluar dari transaksi, balik ke menu utama
+    }
+
+    const jumlah: number = Number(await tanya("Jumlah pesanan       : ")); // ngetik jumlah, diubah jadi angka
+
+    // IF 3: cek jumlah valid atau tidak (kondisinya lebih dari satu: &&, ||, !)
+    // Tidak valid kalau di luar 1 sampai 20, atau bukan bilangan bulat
+    if (!(jumlah >= 1 && jumlah <= maksJumlah) || jumlah % 1 !== 0) {
+      console.log("Pesan error: jumlah harus bilangan bulat 1 sampai " + maksJumlah + ".");
+      continue; // ulang dari awal, tampilkan menu lagi
+    }
+
+    // Cari menu yang id-nya sama dengan yang diketik pembeli
+    const menu: Menu | undefined = cariMenuById(idPilih);
+
+    // IF 4 (rantai if / else if): cek menunya ada dan masih tersedia
+    if (menu === undefined) {
+      // Id tidak ada di daftarMenu
+      console.log("Pesan error: menu dengan ID \"" + idPilih + "\" tidak ditemukan.");
+      continue; // ulang dari awal
+    } else if (!menu.tersedia || menu.stok === 0) {
+      // Menu tidak dijual atau stoknya habis
+      console.log("Pesan error: menu " + menu.nama + " tidak tersedia.");
+      continue; // ulang dari awal
+    }
+
+    // Cek apakah menu yang sama sudah ada di keranjang (pakai find)
+    const itemAda: ItemKeranjang | undefined = keranjang.find((item: ItemKeranjang) => item.menu.id === menu.id);
+    // Berapa porsi menu ini yang sudah ada di keranjang (0 kalau belum ada)
+    const sudahDipesan: number = itemAda === undefined ? 0 : itemAda.jumlah;
+
+    // IF 5: cek stok cukup atau tidak, hitung dari yang sudah di keranjang ditambah pesanan baru
+    if (menu.stok < sudahDipesan + jumlah) {
+      console.log("Pesan error: stok " + menu.nama + " tidak cukup (sisa " + menu.stok + ", di keranjang " + sudahDipesan + ").");
+      continue; // ulang dari awal
+    }
+
+    // Masukkan pesanan ke keranjang
+    if (itemAda !== undefined) {
+      // Menu sudah ada di keranjang: jumlahnya ditambah, subtotal dihitung ulang
+      itemAda.jumlah += jumlah;
+      itemAda.subtotal = hitungSubtotal(menu.harga, itemAda.jumlah);
+    } else {
+      // Menu belum ada di keranjang: tambah baris baru pakai push
+      keranjang.push({ menu: menu, jumlah: jumlah, subtotal: hitungSubtotal(menu.harga, jumlah) });
+    }
+    console.log("Ditambahkan ke keranjang: " + menu.nama + " x" + jumlah); // kabari pembeli
+    tampilKeranjang(keranjang); // tampilkan isi keranjang sekarang
+
+    // Tanya apakah mau nambah pesanan lagi
+    const jawabTambah: string = await tanya("Tambah pesanan lagi (y/n) : ");
+    lanjutPesan = jawabTambah === "y" || jawabTambah === "Y"; // y atau Y = lanjut, selain itu berhenti
   }
 
-  // SWITCH 1: pilihan menu (flowchart: Pilihan menu?)
-  switch (pilihanMenu) {
-    case 1: // jika memilih menu nomor 1
-      namaDipilih = namaMenu1; // simpan nama menu
-      hargaDipilih = hargaMenu1; // simpan harga menu
-      // NESTED IF 1: cek stok di dalam case (flowchart: Stok cukup?)
-      if (stokMenu1 >= jumlah) {
-        stokMenu1 -= jumlah; // kurangi stok sesuai jumlah (compound)
-        total += hargaDipilih * jumlah; // tambahkan subtotal ke total (compound)
-      } else {
-        // Stok tidak cukup: tampilkan pesan error lalu selesai
-        console.log("Pesan error: stok " + namaDipilih + " tidak cukup (sisa " + stokMenu1 + ").");
-        rl.close(); // menutup readline
-        return; // program selesai
-      }
-      break; // keluar dari switch
+  // TAHAP 2: hitung total, diskon, dan poin
+  const jawabMember: string = await tanya("Member (y/n)         : "); // tanya pembeli member atau bukan
+  // Dianggap member kalau jawabnya y atau Y
+  const isMember: boolean = jawabMember === "y" || jawabMember === "Y";
 
-    case 2: // jika memilih menu nomor 2
-      namaDipilih = namaMenu2; // simpan nama menu
-      hargaDipilih = hargaMenu2; // simpan harga menu
-      // NESTED IF 2: cek stok di dalam case
-      if (stokMenu2 >= jumlah) {
-        stokMenu2 -= jumlah; // kurangi stok
-        total += hargaDipilih * jumlah; // tambahkan subtotal
-      } else {
-        // Stok tidak cukup
-        console.log("Pesan error: stok " + namaDipilih + " tidak cukup (sisa " + stokMenu2 + ").");
-        rl.close(); // menutup readline
-        return; // program selesai
-      }
-      break; // keluar dari switch
+  const total: number = hitungTotalKeranjang(keranjang); // total belanja semua isi keranjang
+  const diskon: number = tentukanDiskon(isMember, total); // diskonnya 0%, 5%, 10%, atau 15%
+  const totalBayar: number = hitungTotalBayar(total, diskon); // total setelah dipotong diskon
 
-    case 3: // jika memilih menu nomor 3
-      namaDipilih = namaMenu3; // simpan nama menu
-      hargaDipilih = hargaMenu3; // simpan harga menu
-      // NESTED IF 3: cek stok di dalam case
-      if (stokMenu3 >= jumlah) {
-        stokMenu3 -= jumlah; // kurangi stok
-        total += hargaDipilih * jumlah; // tambahkan subtotal
-      } else {
-        // Stok tidak cukup
-        console.log("Pesan error: stok " + namaDipilih + " tidak cukup (sisa " + stokMenu3 + ").");
-        rl.close(); // menutup readline
-        return; // program selesai
-      }
-      break; // keluar dari switch
-
-    case 4: // jika memilih menu nomor 4
-      namaDipilih = namaMenu4; // simpan nama menu
-      hargaDipilih = hargaMenu4; // simpan harga menu
-      // NESTED IF 4: cek stok di dalam case
-      if (stokMenu4 >= jumlah) {
-        stokMenu4 -= jumlah; // kurangi stok
-        total += hargaDipilih * jumlah; // tambahkan subtotal
-      } else {
-        // Stok tidak cukup
-        console.log("Pesan error: stok " + namaDipilih + " tidak cukup (sisa " + stokMenu4 + ").");
-        rl.close(); // menutup readline
-        return; // program selesai
-      }
-      break; // keluar dari switch
-
-    default: // jika nomor menu bukan 1 sampai 4
-      console.log("Pesan error: menu tidak tersedia."); // tampilkan pesan error
-      rl.close(); // menutup readline
-      return; // program selesai
-  }
-
-  // IF 2: rantai diskon (flowchart: rantai diskon)
-  if (isMember && total >= batasDiskon) {
-    // Member dan total mencapai batas: diskon 15%
-    diskon = 0.15;
-  } else if (total >= batasDiskon) {
-    // Bukan member tetapi total mencapai batas: diskon 10%
-    diskon = 0.1;
-  } else if (isMember) {
-    // Member tetapi total belum mencapai batas: diskon 5%
-    diskon = 0.05;
-  } else {
-    // Selain itu tidak ada diskon
-    diskon = 0;
-  }
-
-  // Menghitung total bayar = total - (total x diskon)
-  totalBayar = total - total * diskon;
-
-  // IF 3: poin untuk member (flowchart: Member?)
+  // Poin dari transaksi ini (pakai let karena bisa bertambah)
+  let poin: number = 0;
+  // IF 6: poin cuma buat member
   if (isMember) {
-    poin += poinTambahan; // member mendapat tambahan poin (compound)
+    poin += poinTambahan; // member dapat tambahan poin (operator +=)
   }
 
-  // Menampilkan ringkasan sebelum pembayaran
+  // Tampilkan ringkasan sebelum bayar
   console.log("");
-  console.log("Total belanja      : Rp" + total);
-  console.log("Diskon             : " + diskon * 100 + "%");
-  console.log("Total bayar        : Rp" + totalBayar);
+  console.log("Total belanja      : " + formatRupiah(total));
+  console.log("Diskon             : " + Math.round(diskon * 100) + "%");
+  console.log("Total bayar        : " + formatRupiah(totalBayar));
 
-  // TAHAP 3: input metode bayar
-  console.log("Metode bayar: 1. Tunai  2. QRIS  3. Debit");
-  rl.question("Pilih metode bayar : ", (jawabMetode: string) => {
-    // Mengubah jawaban menjadi angka lalu lanjut ke proses pembayaran
-    prosesPembayaran(Number(jawabMetode));
-  });
-}
+  // TAHAP 3: pembayaran, diulang terus sampai lunas atau transaksi dibatalkan
+  let metodeBayar: string = ""; // nama metode bayar yang akhirnya dipakai
+  let kembalian: number = 0; // uang kembalian
+  let lunas: boolean = false; // true kalau pembayaran sudah berhasil
+  let dibatalkan: boolean = false; // true kalau pembeli memilih batal
 
-// TAHAP 3: Proses pembayaran sesuai metode bayar
+  // Ulangi pilih metode bayar selama belum lunas dan belum dibatalkan
+  while (!lunas && !dibatalkan) {
+    console.log("");
+    console.log("Metode bayar: 1. Tunai  2. QRIS  3. Debit  0. Batal transaksi");
+    const pilihanBayar: number = Number(await tanya("Pilih metode bayar   : ")); // pilihan diubah jadi angka
 
-function prosesPembayaran(pilihanBayar: number): void {
-  // SWITCH 2: metode bayar (flowchart: Metode bayar?)
-  switch (pilihanBayar) {
-    case 1: // metode Tunai
-      metodeBayar = "Tunai"; // simpan nama metode
-      // Meminta input uang yang dibayarkan
-      rl.question("Uang dibayar      : ", (jawabUang: string) => {
-        uang = Number(jawabUang); // ubah jawaban menjadi angka
-        // NESTED IF 5: cek uang di dalam case (flowchart: Uang cukup?)
-        if (uang >= totalBayar) {
-          kembalian = uang - totalBayar; // hitung kembalian
-          lunas = true; // pembayaran berhasil
-        } else {
-          console.log("Pesan: uang kurang."); // uang tidak cukup
-          lunas = false; // pembayaran gagal
+    // SWITCH 1: pilih cara bayar (4 case + default, tiap case diakhiri break)
+    switch (pilihanBayar) {
+      case 1: // bayar Tunai
+        metodeBayar = "Tunai";
+        {
+          const uang: number = Number(await tanya("Uang dibayar        : ")); // uang dari pembeli
+          // NESTED (if di dalam if di dalam switch): switch (tingkat 1) -> if (tingkat 2) -> if (tingkat 3)
+          if (uang >= totalBayar) {
+            kembalian = uang - totalBayar; // uang cukup, hitung kembaliannya
+            lunas = true; // pembayaran berhasil
+            if (kembalian > 0) {
+              // Ada kembalian: tampilkan rincian pecahannya
+              tampilRincianKembalian(kembalian);
+            }
+          } else {
+            // Uang kurang: pembeli diminta pilih metode bayar lagi
+            console.log("Pesan: uang kurang, silakan pilih metode bayar lagi.");
+          }
         }
-        // Semua jalur bertemu di tahap 4
-        selesaiTransaksi();
-      });
-      break; // keluar dari switch
+        break; // selesai case 1, keluar dari switch
 
-    case 2: // metode QRIS
-      metodeBayar = "QRIS"; // simpan nama metode
-      lunas = true; // QRIS dianggap langsung berhasil
-      selesaiTransaksi(); // lanjut ke tahap 4
-      break; // keluar dari switch
+      case 2: // bayar QRIS
+        metodeBayar = "QRIS";
+        lunas = true; // QRIS langsung dianggap berhasil
+        break; // selesai case 2, keluar dari switch
 
-    case 3: // metode Debit
-      metodeBayar = "Debit"; // simpan nama metode
-      lunas = true; // Debit dianggap langsung berhasil
-      selesaiTransaksi(); // lanjut ke tahap 4
-      break; // keluar dari switch
+      case 3: // bayar Debit
+        metodeBayar = "Debit";
+        {
+          // Tanya hasil PIN dari mesin EDC (diulang di dalam fungsi sampai benar atau ganti metode)
+          const pinBenar: boolean = await cekPinDebit();
+          // IF: Debit berhasil cuma kalau PIN benar
+          if (pinBenar) {
+            lunas = true; // pembayaran berhasil
+          } else {
+            console.log("Kembali ke pilihan metode bayar.");
+          }
+        }
+        break; // selesai case 3, keluar dari switch
 
-    default: // jika metode bayar tidak tersedia
-      metodeBayar = "-"; // tidak ada metode
-      console.log("Pesan error: metode bayar tidak tersedia."); // tampilkan pesan error
-      lunas = false; // pembayaran gagal
-      selesaiTransaksi(); // lanjut ke tahap 4
-      break; // keluar dari switch
-  }
-}
+      case 0: // batal transaksi
+        dibatalkan = true; // bikin perulangan pembayaran berhenti
+        break; // selesai case 0, keluar dari switch
 
-// TAHAP 4: Status transaksi dan cetak struk
-
-function selesaiTransaksi(): void {
-  // IF 4: status transaksi (flowchart: lunas = true?)
-  if (lunas) {
-    status = "LUNAS"; // pembayaran berhasil
-  } else {
-    status = "TIDAK LUNAS"; // pembayaran gagal
+      default: // pilihan metode bayar tidak ada
+        console.log("Pesan error: metode bayar tidak tersedia.");
+        break; // keluar dari switch
+    }
   }
 
-  // Mencetak struk pembelian
-  console.log("");
-  console.log("========== STRUK ==========");
-  console.log("Menu         : " + namaDipilih);
-  console.log("Harga        : Rp" + hargaDipilih);
-  console.log("Jumlah       : " + jumlah);
-  console.log("Total        : Rp" + total);
-  console.log("Diskon       : " + diskon * 100 + "%");
-  console.log("Total bayar  : Rp" + totalBayar);
-  console.log("Metode bayar : " + metodeBayar);
-  console.log("Kembalian    : Rp" + kembalian);
-  console.log("Poin         : " + poin);
-  console.log("Status       : " + status);
-  console.log("===========================");
+  // IF: kalau dibatalkan, stok, pendapatan, dan poin tidak berubah
+  if (dibatalkan) {
+    console.log("Transaksi dibatalkan.");
+    return; // balik ke menu utama
+  }
 
-  // Menutup readline sebagai akhir program (flowchart: Selesai)
-  rl.close();
+  // TAHAP 4: pembayaran berhasil, update data lalu cetak struk
+  // Kurangi stok tiap menu yang ada di keranjang
+  for (const item of keranjang) {
+    item.menu.stok -= item.jumlah; // stok berkurang sebanyak yang dibeli (operator -=)
+  }
+  totalPendapatan += totalBayar; // tambahkan ke total pendapatan
+  totalPoin += poin; // tambahkan ke total poin
+
+  // Naikkan nomor transaksi lalu siapkan data buat struk
+  jumlahTransaksi = jumlahTransaksi + 1; // operator + (penjumlahan), nomor transaksi naik 1
+  const transaksi: Transaksi = {
+    nomor: jumlahTransaksi, // nomor struk
+    keranjang: keranjang, // isi belanjaan
+    total: total, // total sebelum diskon
+    diskon: diskon, // diskon yang didapat
+    totalBayar: totalBayar, // total yang dibayar
+    metodeBayar: metodeBayar, // cara bayar
+    kembalian: kembalian, // uang kembalian
+    poin: poin, // poin yang didapat
+    status: "LUNAS", // struk cuma dicetak kalau sudah bayar, jadi pasti LUNAS
+  };
+  cetakStruk(transaksi); // cetak struknya
 }
 
-// Menjalankan program dari tahap 1
-mulai();
-
-//p
+// ============================================================================
+// SEMENTARA (langkah 3): kode percobaan biar bagian ini bisa dijalankan sendiri.
+// Bagian ini DIHAPUS di langkah berikutnya.
+// ============================================================================
+prosesTransaksi().then(() => { // coba jalankan 1 transaksi saja
+  rl.close(); // tutup input setelah transaksi selesai
+});
