@@ -5,7 +5,7 @@ function tampilMenuUtama(): void {
   console.log("");
   console.log(buatGaris(32, "=")); // garis atas
   console.log("        KASIR KANTIN"); // judul program
-  console.log(buatGaris(32, "=")); // garis bawah judul
+  console.log(buatGaris(32, "=")); // garis bawah judul.
   console.log("1. Tambah menu (Create)");
   console.log("2. Lihat menu (Read)");
   console.log("3. Ubah menu (Update)");
