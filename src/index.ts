@@ -7,8 +7,8 @@ const rl = readline.createInterface({
   output: process.stdout, // output keluar ke layar terminal
 });
 
-// Menu: bentuk data untuk 1 menu di kantin, bisa makanan atau minuman.
-// Jadi tiap menu pasti punya id, nama, kategori, harga, stok, dan status tersedia.
+// Menu: bentuk data untuk 1 menu di kantin, bisa makanan atau minuman
+// Jadi tiap menu pasti punya id, nama, kategori, harga, stok, dan status tersedia
 interface Menu {
   id: string; // kode menu biar tidak ketuker, contoh "M001"
   nama: string; // nama menunya, contoh "Nasi Goreng"
