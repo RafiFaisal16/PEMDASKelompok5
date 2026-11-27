@@ -14,11 +14,16 @@ Progress 1 — Senin, 23 November 2026
 | Nama | NIM | GitHub | Bagian yang dikerjakan |
 | ---- | --- | ------ | ---------------------- |
 | Muhammad Rafi Faisal | 263140700111029 | @RafiFaisal16 | Membuat repository, setting file project, sistem dasar dari UTS, README, dan folder docs/ |
-| Hafidz Muhammad Ilham | 263140700111006 | @MORTEKS | Laporan Bagian A (proposal dan analisis awal): 1.1 Deskripsi Masalah, serta 1.2 Decomposition Menu Utama, Create, dan Read |
-| Naila Putri Sahiro | 263140700111049 | @Nxthy707 | Penyusunan dan pemeriksaan format laporan: Halaman Sampul, 1.1 Entitas Data dan Properti, 1.2 Decomposition Update, Delete, dan Search, serta 3.2 rencana pembagian tugas |
+| Hafidz Muhammad Ilham | 263140700111006 | @MORTEKS | Laporan Bagian A (proposal dan analisis awal): 1.1 Deskripsi Masalah, serta 1.2 Decomposition |
+| Naila Putri Sahiro | 263140700111049 | @Nxthy707 | Penyusunan dan pemeriksaan format laporan: Halaman Sampul, 1.1 Entitas Data dan Properti, 1.2 Decomposition upddate, serta 3.2 rencana pembagian tugas |
 
-Semua anggota membuat minimal 1 commit dengan akun GitHub masing-masing.
+Progress 2 — Jumat, 27 November 2026
 
+| Nama | NIM | GitHub | Bagian yang dikerjakan |
+| ---- | --- | ------ | ---------------------- |
+| Muhammad Rafi Faisal | 263140700111029 | @RafiFaisal16 | Membuat repository, setting file project, sistem dasar dari UTS, README, membuat feature struktur data, feature fungsi bantu,  2.1 flowchart alur menu utama, 2.2 menerangkan flowchart, 3.1 pemetaan pemenuhan ketentuan project, 3.3 screenshoot hasil |
+| Hafidz Muhammad Ilham | 263140700111006 | @MORTEKS | Laporan Bagian A (proposal dan analisis awal): 1.1 Deskripsi Masalah, serta 1.2 Decomposition, membuat feature proses transaksi |
+| Naila Putri Sahiro | 263140700111049 | @Nxthy707 | Penyusunan dan pemeriksaan format laporan: Halaman Sampul, 1.1 Entitas Data dan Properti, 1.2 Decomposition upddate, serta 3.2 rencana pembagian tugas, membuat feature menu utama, 1.3 pattern recognitiion, 1.4 abstraction, 1.5 algoritma thinking. |
 ---
 
 ## Tentang Aplikasi
