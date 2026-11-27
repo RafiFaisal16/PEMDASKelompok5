@@ -34,7 +34,7 @@ function tampilRingkasanAkhir(): void {
 async function jalankanAplikasi(): Promise<void> {
   let berjalan: boolean = true; // true = program masih jalan, false = mau keluar
 
-  // Ulangi menu selama berjalan masih true
+  // Ulangi menu selama berjalan masih true.
   while (berjalan) {
     tampilMenuUtama(); // tampilkan pilihan menu
     const jawab: string = await tanya("Pilih menu (0-6) : "); // pengguna ngetik pilihan
