@@ -1,21 +1,3 @@
-// ============================================================================
-// KASIR KANTIN - UAS PEMROGRAMAN DASAR (T1-B, Kelompok 5)
-// Pengembangan dari proyek UTS "Kasir Kantin" (satu transaksi) menjadi
-// aplikasi menu berulang (loop) dengan data menu disimpan di array.
-//
-// PROGRESS 2 mencakup:
-//   - Struktur data (interface Menu dan Transaksi) + data awal (seed)
-//   - Fungsi bertipe (parameter & return type)
-//   - Fondasi materi UTS (operator, if, switch, nested, tipe data, const/let)
-//   - Kerangka menu utama berulang sampai pengguna memilih keluar
-//   - Fitur transaksi dari UTS tetap berjalan (kini memakai array dan keranjang
-//     sehingga satu transaksi bisa berisi beberapa menu)
-//   - Pembayaran berulang sampai berhasil (Tunai, QRIS, Debit dengan PIN) atau dibatalkan
-//
-// Blok Create, Read, Update, Delete, dan Search masih berupa kerangka dan
-// akan diisi pada Progress 3 sampai 6.
-// ============================================================================
-
 import * as readline from "readline";
 
 // ============================================================================
@@ -83,10 +65,3 @@ const daftarPecahan: number[] = [100000, 50000, 20000, 10000, 5000, 2000, 1000, 
 let jumlahTransaksi: number = 0; // jumlah transaksi yang sudah dibuat
 let totalPendapatan: number = 0; // total uang yang diterima dari transaksi LUNAS
 let totalPoin: number = 0; // total poin member yang terkumpul pada sesi ini
-
-// ============================================================================
-// SEMENTARA (langkah 1): kode uji agar blok ini bisa dijalankan sendiri.
-// Bagian ini DIHAPUS pada langkah berikutnya.
-// ============================================================================
-console.log("Data awal dimuat: " + daftarMenu.length + " menu.");
-rl.close();
