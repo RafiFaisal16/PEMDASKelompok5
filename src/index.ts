@@ -31,15 +31,15 @@ async function cekPinDebit(): Promise<boolean> {
   while (true) {
     console.log("Pelanggan memasukkan PIN di mesin EDC.");
     const jawab: string = await tanya("PIN benar menurut mesin EDC (y/n) : ");
-    // IF: PIN dianggap benar kalau kasir jawab y atau Y
+    // IF: PIN dianggap benar kalau kasir jawab y atau Y.
     if (jawab === "y" || jawab === "Y") {
-      return true; // PIN benar, bayar Debit berhasil
+      return true; // PIN benar, bayar Debit berhasil.
     }
     console.log("Pesan error: PIN salah.");
     const pilih: string = await tanya("1. Coba lagi  2. Ganti metode bayar : ");
-    // IF: kalau pilih 2 berarti balik ke pilihan metode bayar
+    // IF: kalau pilih 2 berarti balik ke pilihan metode bayar.
     if (pilih === "2") {
-      return false; // bayar Debit tidak jadi
+      return false; // bayar Debit tidak jadi.
     }
   }
 }
@@ -50,7 +50,7 @@ async function prosesTransaksi(): Promise<void> {
   const keranjang: ItemKeranjang[] = []; // keranjang kosong buat transaksi ini
   let lanjutPesan: boolean = true; // true berarti masih mau nambah pesanan
 
-  // Ulangi terus selama pembeli masih mau nambah pesanan
+  // Ulangi terus selama pembeli masih mau nambah pesanan.
   while (lanjutPesan) {
     tampilPilihanMenu(); // tampilkan daftar makanan dan minuman
     const idPilih: string = await tanya("ID menu (0 = batal)  : "); // pembeli ngetik id menu
