@@ -59,4 +59,4 @@ const daftarPecahan: number[] = [100000, 50000, 20000, 10000, 5000, 2000, 1000, 
 // DATA SELAMA PROGRAM JALAN (pakai let karena nilainya terus berubah)
 let jumlahTransaksi: number = 0; // sudah berapa transaksi yang selesai
 let totalPendapatan: number = 0; // total uang yang masuk dari transaksi yang lunas
-let totalPoin: number = 0; // total poin member yang terkumpul
+let totalPoin: number = 0; // total poin member yang terkumpul.
