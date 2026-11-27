@@ -23,7 +23,7 @@ function cetakStruk(t: Transaksi): void {
   console.log("==============================="); // garis penutup struk
 }
 
-// Fungsi buat bayar pakai Debit. PIN diketik pelanggan sendiri di mesin EDC,
+// Fungsi buat bayar pakai debit. PIN diketik pelanggan sendiri di mesin EDC,
 // jadi program ini tidak tahu PIN-nya. Kasir cuma ngisi hasilnya: PIN benar atau salah.
 // Hasilnya true kalau PIN benar, false kalau pelanggan memilih ganti metode bayar.
 async function cekPinDebit(): Promise<boolean> {
